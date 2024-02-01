@@ -24,17 +24,15 @@ if __name__ == "__main__":
     requirements_file = 'requirements.txt'
     convert_requirements_to_package_json(requirements_file)
 
-
-
+import os
 # Handles installations
-os.system(
-    "sudo apt update"
-    "sudo apt install -y libgl1-mesa-glx")
+os.system("sudo apt update")
+os.system("sudo apt install -y libgl1-mesa-glx")
+
 os.system("pip install opencv-python pytube")
 
 import cv2
 import subprocess
-import os
 
 from pytube import YouTube
 import time
