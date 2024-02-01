@@ -30,6 +30,7 @@ os.system("sudo apt update")
 os.system("sudo apt install -y libgl1-mesa-glx")
 
 os.system("pip install opencv-python pytube")
+os.system("pip install --upgrade pytube")
 
 import cv2
 import subprocess
