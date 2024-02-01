@@ -24,7 +24,6 @@ if __name__ == "__main__":
     requirements_file = 'requirements.txt'
     convert_requirements_to_package_json(requirements_file)
 
-
 import cv2
 import subprocess
 import os
@@ -52,37 +51,8 @@ def frame_to_ascii(frame, width, height):
     # Convert the frame to grayscale
     gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    # Threshold the image to get binary image
-    _, binary_frame = cv2.threshold(gray_frame, 240, 255, cv2.THRESH_BINARY)
-
-    # Find contours
-    contours, _ = cv2.findContours(binary_frame, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-    # If no contours are found, zoom out to the entire frame
-    if not contours:
-        resized_frame = cv2.resize(gray_frame, (width, height))
-    else:
-        # Find bounding box of the largest contour (e.g., person)
-        x, y, w, h = cv2.boundingRect(max(contours, key=cv2.contourArea))
-
-        # Expand the bounding box to include some blank space around the object
-        padding = 10
-        x -= padding
-        y -= padding
-        w += 2 * padding
-        h += 2 * padding
-
-        # Ensure the bounding box does not exceed frame boundaries
-        x = max(0, x)
-        y = max(0, y)
-        w = min(gray_frame.shape[1] - 1, x + w) - x
-        h = min(gray_frame.shape[0] - 1, y + h) - y
-
-        # Crop the frame to the bounding box
-        cropped_frame = gray_frame[y:y+h, x:x+w]
-
-        # Resize the cropped frame to match desired width and height
-        resized_frame = cv2.resize(cropped_frame, (width, height))
+    # Resize the frame to match desired width and height
+    resized_frame = cv2.resize(gray_frame, (width, height))
 
     # Convert resized frame to ASCII art
     ascii_art = ''
@@ -97,6 +67,9 @@ def clear_console():
 
 def process_video_frames(cap, display_width, display_height):
     frame_count = 0
+    fps = cap.get(cv2.CAP_PROP_FPS)  # Get the frame rate of the video
+    frame_duration = 1 / fps  # Calculate the duration of each frame
+
     while cap.isOpened():
         ret, frame = cap.read()
         if not ret:
@@ -110,8 +83,8 @@ def process_video_frames(cap, display_width, display_height):
         clear_console()
         print(ascii_art, end='', flush=True)
 
-        # Introduce a small delay to control the frame rate
-        time.sleep(0.1)
+        # Introduce a delay based on the frame rate of the video
+        time.sleep(frame_duration)
 
         # Increment frame count
         frame_count += 1
@@ -132,8 +105,8 @@ if __name__ == "__main__":
     cap = cv2.VideoCapture(video_path)
 
     # Set display width and height (adjust as needed)
-    display_width = 100
-    display_height = 30
+    display_width = 200
+    display_height = 60
 
     print("Playing video:")
 
