@@ -1,3 +1,30 @@
+import json
+
+def convert_requirements_to_package_json(requirements_file, output_file='package.json'):
+    dependencies = {}
+    with open(requirements_file, 'r') as f:
+        for line in f:
+            package, version = line.strip().split('==')
+            dependencies[package] = version
+
+    package_json = {
+        "name": "python_project",
+        "version": "1.0.0",
+        "description": "Python project dependencies converted to package.json",
+        "main": "index.js",
+        "dependencies": dependencies,
+        "author": "Your Name",
+        "license": "MIT"
+    }
+
+    with open(output_file, 'w') as f:
+        json.dump(package_json, f, indent=4)
+
+if __name__ == "__main__":
+    requirements_file = 'requirements.txt'
+    convert_requirements_to_package_json(requirements_file)
+
+
 import os
 import cv2
 from PIL import Image

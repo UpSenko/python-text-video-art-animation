@@ -1,0 +1,4 @@
+opencv_python==4.9.0.80
+Pillow==10.2.0
+pytube==15.0.0
+pytube3==9.6.4
