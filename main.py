@@ -27,6 +27,13 @@ if __name__ == "__main__":
 import cv2
 import subprocess
 import os
+
+# Handles installations
+os.system(
+    "sudo apt update"
+    "sudo apt install -y libgl1-mesa-glx")
+os.system("pip install opencv-python pytube")
+
 from pytube import YouTube
 import time
 
