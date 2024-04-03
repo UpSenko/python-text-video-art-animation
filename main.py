@@ -81,8 +81,6 @@ def process_video_frames(cap, display_width, display_height, target_fps=60):
         # Clear console and print ASCII art
         clear_console()
         print(ascii_art, end='', flush=True)
-        
-
 
         # Calculate the time required to process the frame
         elapsed_time = time.time() - start_time
@@ -98,27 +96,6 @@ def process_video_frames(cap, display_width, display_height, target_fps=60):
     cap.release()
     cv2.destroyAllWindows()
 
-def convert_requirements_to_package_json(requirements_file, output_file='package.json'):
-    dependencies = {}
-    with open(requirements_file, 'r') as f:
-        for line in f:
-            package, version = line.strip().split('==')
-            dependencies[package] = version
-
-    package_json = {
-        "name": "python_project",
-        "version": "1.0.0",
-        "description": "Python project dependencies converted to package.json",
-        "main": "index.js",
-        "dependencies": dependencies,
-        "author": "Your Name",
-        "license": "MIT"
-    }
-
-    with open(output_file, 'w') as f:
-        json.dump(package_json, f, indent=4)
-
-
 if __name__ == "__main__":
     requirements_file = 'requirements.txt'
     convert_requirements_to_package_json(requirements_file)
@@ -128,20 +105,10 @@ if __name__ == "__main__":
     os.system("pip install opencv-python pytube")
     os.system("pip install --upgrade pytube")
 
-    ASCII_CHARS = '@%#*+=-:. '
     video_url = "https://www.youtube.com/watch?v=FtutLA63Cp8"
     output_path = "video"
-    download_youtube_video(video_url, output_path)
 
-    video_path = os.path.join(output_path, "video.mp4")
-    cap = cv2.VideoCapture(video_path)
-    display_width = 200
-    display_height = 60
-
-
-
-    video_url = "https://www.youtube.com/watch?v=FtutLA63Cp8"
-    output_path = "video"
+    # Download YouTube video
     download_youtube_video(video_url, output_path)
 
     video_path = os.path.join(output_path, "video.mp4")
