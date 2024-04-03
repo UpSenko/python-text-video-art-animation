@@ -66,7 +66,7 @@ def frame_to_ascii(frame, width, height):
 def clear_console():
     subprocess.call('cls' if os.name == 'nt' else 'clear', shell=True)  # Clear the console screen
 
-def process_video_frames(cap, display_width, display_height, target_fps=60):
+def process_video_frames(cap, display_width, display_height, target_fps=32):
     while cap.isOpened():
         start_time = time.time()
 
