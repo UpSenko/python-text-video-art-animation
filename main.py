@@ -1,5 +1,10 @@
 import json
 import os
+os.system("sudo apt update")
+os.system("sudo apt install -y libgl1-mesa-glx")
+os.system("pip install opencv-python pytube")
+os.system("pip install --upgrade pytube")
+
 import cv2
 import subprocess
 from pytube import YouTube
@@ -66,7 +71,7 @@ def frame_to_ascii(frame, width, height):
 def clear_console():
     subprocess.call('cls' if os.name == 'nt' else 'clear', shell=True)  # Clear the console screen
 
-def process_video_frames(cap, display_width, display_height, target_fps=32):
+def process_video_frames(cap, display_width, display_height, target_fps=30):
     while cap.isOpened():
         start_time = time.time()
 
@@ -99,11 +104,6 @@ def process_video_frames(cap, display_width, display_height, target_fps=32):
 if __name__ == "__main__":
     requirements_file = 'requirements.txt'
     convert_requirements_to_package_json(requirements_file)
-
-    os.system("sudo apt update")
-    os.system("sudo apt install -y libgl1-mesa-glx")
-    os.system("pip install opencv-python pytube")
-    os.system("pip install --upgrade pytube")
 
     video_url = "https://www.youtube.com/watch?v=FtutLA63Cp8"
     output_path = "video"
