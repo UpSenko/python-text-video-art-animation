@@ -52,8 +52,12 @@ def download_youtube_video(url, output_path):
 
 # Function to convert a frame to smoothed ASCII art
 def frame_to_ascii(frame, width, height):
-    # Convert the frame to grayscale
-    gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    # Check if the frame is in color (BGR) format
+    if len(frame.shape) == 3 and frame.shape[2] == 3:
+        # Convert the frame to grayscale
+        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    else:
+        gray_frame = frame  # If already grayscale, no need for conversion
 
     # Resize the frame to match desired width and height
     resized_frame = cv2.resize(gray_frame, (width, height))
@@ -80,8 +84,11 @@ def process_video_frames(cap, display_width, display_height, target_fps=30):
             print("End of video")
             break
 
-        # Convert frame to ASCII art
-        ascii_art = frame_to_ascii(frame, display_width, display_height)
+        # Convert frame to black and white (grayscale)
+        frame_bw = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+        # Convert grayscale frame to ASCII art
+        ascii_art = frame_to_ascii(frame_bw, display_width, display_height)
 
         # Clear console and print ASCII art
         clear_console()
@@ -105,7 +112,7 @@ if __name__ == "__main__":
     requirements_file = 'requirements.txt'
     convert_requirements_to_package_json(requirements_file)
 
-    video_url = "https://www.youtube.com/watch?v=FtutLA63Cp8"
+    video_url = "https://youtu.be/AjFijrXaxkg"
     output_path = "video"
 
     # Download YouTube video
