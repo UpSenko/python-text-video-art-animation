@@ -1,14 +1,16 @@
 import json
 import os
+import cv2
+
+# Install Dependencies
 os.system("sudo apt update")
 os.system("sudo apt install -y libgl1-mesa-glx")
 os.system("pip install opencv-python pytube")
 os.system("pip install --upgrade pytube")
 
-import cv2
 import subprocess
-from pytube import YouTube
 import time
+from pytube import YouTube
 
 # Define ASCII characters ordered by intensity
 ASCII_CHARS = '@%#*+=-:. '
@@ -16,7 +18,7 @@ ASCII_CHARS = '@%#*+=-:. '
 # Custom ASCII characters with varying intensities
 CUSTOM_ASCII_CHARS = ' .,:;irsXA253hMHGS#9B&@'
 
-# Function to download requirements file
+# Function to convert requirements.txt to package.json
 def convert_requirements_to_package_json(requirements_file, output_file='package.json'):
     dependencies = {}
     with open(requirements_file, 'r') as f:
@@ -50,32 +52,33 @@ def download_youtube_video(url, output_path):
     stream.download(output_path, filename="video.mp4")
     print("Video downloaded successfully.")
 
-# Function to convert a frame to smoothed ASCII art
+# Function to convert a frame to ASCII art
 def frame_to_ascii(frame, width, height):
-    # Check if the frame is in color (BGR) format
-    if len(frame.shape) == 3 and frame.shape[2] == 3:
-        # Convert the frame to grayscale
-        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    else:
-        gray_frame = frame  # If already grayscale, no need for conversion
+    # Convert the frame to grayscale
+    gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    # Resize the frame to match desired width and height
+    # Resize the frame
     resized_frame = cv2.resize(gray_frame, (width, height))
 
-    # Define ASCII art
+    # Convert the resized frame to ASCII art
     ascii_art = ''
     for row in resized_frame:
         for pixel in row:
-            # Map pixel intensity to custom ASCII character
+            # Map pixel intensity to ASCII character
             ascii_art += CUSTOM_ASCII_CHARS[pixel // 16]
         ascii_art += '\n'
 
     return ascii_art
 
+# Function to clear the console
 def clear_console():
-    subprocess.call('cls' if os.name == 'nt' else 'clear', shell=True)  # Clear the console screen
+    subprocess.call('cls' if os.name == 'nt' else 'clear', shell=True)
 
-def process_video_frames(cap, display_width, display_height, target_fps=30):
+# Function to process video frames and display ASCII art
+def process_video_frames(cap, display_width, display_height):
+    # Get the original video frame rate
+    original_fps = cap.get(cv2.CAP_PROP_FPS)
+
     while cap.isOpened():
         start_time = time.time()
 
@@ -84,26 +87,20 @@ def process_video_frames(cap, display_width, display_height, target_fps=30):
             print("End of video")
             break
 
-        # Convert frame to black and white (grayscale)
-        frame_bw = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        # Convert frame to ASCII art
+        ascii_art = frame_to_ascii(frame, display_width, display_height)
 
-        # Convert grayscale frame to ASCII art
-        ascii_art = frame_to_ascii(frame_bw, display_width, display_height)
-
-        # Clear console and print ASCII art
+        # Clear console and display ASCII art
         clear_console()
         print(ascii_art, end='', flush=True)
 
-        # Calculate the time required to process the frame
+        # Calculate the time elapsed since the start of processing
         elapsed_time = time.time() - start_time
 
-        # Calculate the delay to achieve the target frame rate
-        target_delay = 1 / target_fps
-
-        # If processing time is less than the target delay, adjust the delay
-        if elapsed_time < target_delay:
-            remaining_delay = target_delay - elapsed_time
-            time.sleep(remaining_delay)
+        # Calculate delay to maintain the original frame rate
+        delay = 1 / original_fps - elapsed_time
+        if delay > 0:
+            time.sleep(delay)
 
     cap.release()
     cv2.destroyAllWindows()
@@ -127,7 +124,7 @@ if __name__ == "__main__":
 
     print("Playing video:")
 
-    # Process frames
+    # Process video frames and display ASCII art
     process_video_frames(cap, display_width, display_height)
 
     # Remove the video file after processing
