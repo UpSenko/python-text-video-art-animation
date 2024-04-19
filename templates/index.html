@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ASCII Video Player</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+<script>
+    var socket = io();
+
+    function playVideo() {
+        socket.emit('request_ascii_art');
+    }
+
+    socket.on('ascii_art_update', function(asciiArt) {
+        document.getElementById('ascii-art').innerText = asciiArt;
+    });
+</script>
+</head>
+<body>
+<textarea id="ascii-art" rows="30" cols="100" readonly></textarea>
+<br>
+<button onclick="playVideo()">Play</button>
+</body>
+</html>
