@@ -1,23 +1,45 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>ASCII Video Player</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
-<script>
-    var socket = io();
-
-    function playVideo() {
-        socket.emit('request_ascii_art');
-    }
-
-    socket.on('ascii_art_update', function(asciiArt) {
-        document.getElementById('ascii-art').innerText = asciiArt;
-    });
-</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCII Art Video Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        #ascii-art {
+            white-space: pre;
+            font-family: monospace;
+            font-size: 12px;
+            line-height: 1;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        #audio-controls {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-<textarea id="ascii-art" rows="30" cols="100" readonly></textarea>
-<br>
-<button onclick="playVideo()">Play</button>
+    <div id="ascii-art"></div>
+    <div id="audio-controls">
+        <audio id="audio" controls autoplay>
+            <source src="/audio/audio.wav" type="audio/wav">
+            Your browser does not support the audio tag.
+        </audio>
+    </div>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script>
+        var socket = io();
+        socket.on('update_frame', function(data) {
+            document.getElementById('ascii-art').textContent = data.ascii_art;
+        });
+    </script>
 </body>
 </html>
