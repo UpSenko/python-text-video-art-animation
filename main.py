@@ -1,22 +1,26 @@
-import json
 import os
-import cv2
+import subprocess
+import json
+import time
+
+# Update pip to the latest version
+subprocess.check_call(["pip", "install", "--upgrade", "pip"])
 
 # Install Dependencies
 os.system("sudo apt update")
 os.system("sudo apt install -y libgl1-mesa-glx")
-os.system("pip install opencv-python pytube")
-os.system("pip install --upgrade pytube")
+os.system("pip install opencv-python yt-dlp")
 
-import subprocess
-import time
-from pytube import YouTube
+import cv2
+import yt_dlp as youtube_dl  # Use yt-dlp for downloading YouTube videos
 
 # Define ASCII characters ordered by intensity
 ASCII_CHARS = '@%#*+=-:. '
 
 # Custom ASCII characters with varying intensities
 CUSTOM_ASCII_CHARS = ' .,:;irsXA253hMHGS#9B&@'
+
+
 
 # Function to convert requirements.txt to package.json
 def convert_requirements_to_package_json(requirements_file, output_file='package.json'):
@@ -39,18 +43,19 @@ def convert_requirements_to_package_json(requirements_file, output_file='package
     with open(output_file, 'w') as f:
         json.dump(package_json, f, indent=4)
 
-# Function to download a YouTube video
+# Function to download a YouTube video using yt-dlp
 def download_youtube_video(url, output_path):
     print("Downloading video...")
-    yt = YouTube(url)
-    stream = yt.streams.get_highest_resolution()
-
-    # Create the output directory if it doesn't exist
-    os.makedirs(output_path, exist_ok=True)
-
-    # Download the video to the output directory
-    stream.download(output_path, filename="video.mp4")
-    print("Video downloaded successfully.")
+    try:
+        ydl_opts = {
+            'format': 'best',
+            'outtmpl': os.path.join(output_path, 'video.mp4'),
+        }
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([url])
+        print("Video downloaded successfully.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 # Function to convert a frame to ASCII art
 def frame_to_ascii(frame, width, height):
